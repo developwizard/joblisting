@@ -2,6 +2,8 @@ package com.dewiz.joblisting;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.mongo.MongoProperties;
+import org.springframework.boot.autoconfigure.mongo.PropertiesMongoConnectionDetails;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -10,10 +12,9 @@ import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
-@EnableSwagger2
+//@EnableSwagger2
 public class JoblistingApplication {
     @Bean
     public Docket api() {
@@ -26,6 +27,15 @@ public class JoblistingApplication {
     public ApiInfo apiInfo() {
         final ApiInfoBuilder builder = new ApiInfoBuilder();
         return builder.build();
+    }
+
+    @Bean
+    PropertiesMongoConnectionDetails mongoProperties(final MongoProperties mongoProperties) {
+        final String withDatabaseName =
+                mongoProperties.getUri().replace("/?", "/" + mongoProperties.getDatabase() + "?");
+        mongoProperties.setUri(withDatabaseName);
+
+        return new PropertiesMongoConnectionDetails(mongoProperties);
     }
 
     public static void main(String[] args) {
